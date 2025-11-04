@@ -17,7 +17,6 @@
 	},
 	"containers": [
 		{
-			"name": "static-frontend-container-backend",
 			"class_name": "Backend",
 			"image": "./Dockerfile",
 			"max_instances": 3

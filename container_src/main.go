@@ -4,21 +4,47 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	widgets := []map[string]interface{}{
-		{"id": 1, "name": "Widget A"},
-		{"id": 2, "name": "Widget B"},
-		{"id": 3, "name": "Widget C"},
-	}
+var widgets = []map[string]interface{}{
+	{"id": 1, "name": "Widget A"},
+	{"id": 2, "name": "Widget B"},
+	{"id": 3, "name": "Widget C"},
+}
 
+func widgetsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	json.NewEncoder(w).Encode(widgets)
+
+	path := strings.TrimPrefix(r.URL.Path, "/api/widgets")
+
+	if path == "" || path == "/" {
+		json.NewEncoder(w).Encode(widgets)
+		return
+	}
+
+	idString := strings.TrimPrefix(path, "/")
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		http.Error(w, "Invalid widget ID", http.StatusBadRequest)
+		return
+	}
+
+	for _, widget := range widgets {
+		if widget["id"] == id {
+			json.NewEncoder(w).Encode(widget)
+			return
+		}
+	}
+
+	http.Error(w, "Widget not found", http.StatusNotFound)
 }
 
 func main() {
-	http.HandleFunc("/api/widgets", handler)
+	http.HandleFunc("/api/widgets", widgetsHandler)
+	http.HandleFunc("/api/widgets/", widgetsHandler)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

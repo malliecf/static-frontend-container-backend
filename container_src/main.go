@@ -9,9 +9,9 @@ import (
 )
 
 var widgets = []map[string]interface{}{
-	{"id": 1, "name": "Widget AA"},
-	{"id": 2, "name": "Widget BB"},
-	{"id": 3, "name": "Widget CC"},
+	{"id": 1, "name": "Widget AAA"},
+	{"id": 2, "name": "Widget BBB"},
+	{"id": 3, "name": "Widget CCC"},
 }
 
 func widgetsHandler(w http.ResponseWriter, r *http.Request) {
